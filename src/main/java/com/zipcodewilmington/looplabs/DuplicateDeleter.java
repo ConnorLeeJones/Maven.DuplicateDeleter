@@ -12,21 +12,21 @@ import static java.util.Arrays.asList;
  */
 public abstract class DuplicateDeleter<T> implements DuplicateDeleterInterface<T> {
     protected T[] array;
+    private T[] permArray;
     private HashMap<T, Integer> thisMap;
     private ArrayList<T> thisList;
-    ArrayList<T> dupsToRemove = new ArrayList<>();
-
+    private ArrayList<T> dupsToRemove;
 
 
     public DuplicateDeleter(T[] intArray) {
         this.array = intArray;
         this.thisList = new ArrayList<>(asList(array));
         this.thisMap = new HashMap<>();
-        mapSetUp();
+        this.permArray = intArray;
     }
 
     public T[] removeDuplicates(int maxNumberOfDuplications){
-        T[] cloneArray = this.array.clone();
+        setUp();
 
         for (Map.Entry<T, Integer> entry : thisMap.entrySet()){
             if (entry.getValue() >= maxNumberOfDuplications){
@@ -40,6 +40,8 @@ public abstract class DuplicateDeleter<T> implements DuplicateDeleterInterface<T
     }
 
     public T[] removeDuplicatesExactly(int exactNumberOfDuplications){
+        setUp();
+
         for (Map.Entry<T, Integer> entry : thisMap.entrySet()){
             if (entry.getValue() == exactNumberOfDuplications){
                 this.dupsToRemove.add(entry.getKey());
@@ -63,7 +65,10 @@ public abstract class DuplicateDeleter<T> implements DuplicateDeleterInterface<T
     }
 
 
-    public void mapSetUp(){
+    public void setUp(){
+        this.array = permArray.clone();
+        dupsToRemove = new ArrayList<>();
+        this.thisMap = new HashMap<>();
         Integer count;
         for (T element : this.thisList){
             if (thisMap.get(element) == null){
@@ -73,27 +78,5 @@ public abstract class DuplicateDeleter<T> implements DuplicateDeleterInterface<T
                 thisMap.put(element, count + 1);
             }
         }
-    }
-
-    public void setUpRemoveList(Integer amount){
-        for (Map.Entry<T, Integer> entry : thisMap.entrySet()){
-            if (entry.getValue() >= amount){
-                this.dupsToRemove.add(entry.getKey());
-            }
-        }
-    }
-
-
-
-    public HashMap<T, Integer> getThisMap() {
-        return thisMap;
-    }
-
-    public ArrayList<T> getThisList() {
-        return thisList;
-    }
-
-    public ArrayList<T> getDupsToRemove() {
-        return dupsToRemove;
     }
 }
