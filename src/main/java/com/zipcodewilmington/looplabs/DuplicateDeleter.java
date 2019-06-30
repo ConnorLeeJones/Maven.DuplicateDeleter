@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.Arrays.asList;
 
 /**
  * Created by leon on 1/25/18.
@@ -14,13 +13,10 @@ public abstract class DuplicateDeleter<T> implements DuplicateDeleterInterface<T
     protected T[] array;
     private T[] permArray;
     private HashMap<T, Integer> thisMap;
-    private ArrayList<T> thisList;
-    private ArrayList<T> dupsToRemove;
 
 
     public DuplicateDeleter(T[] intArray) {
         this.array = intArray;
-        this.thisList = new ArrayList<>(asList(array));
         this.thisMap = new HashMap<>();
         this.permArray = intArray;
     }
@@ -30,11 +26,8 @@ public abstract class DuplicateDeleter<T> implements DuplicateDeleterInterface<T
 
         for (Map.Entry<T, Integer> entry : thisMap.entrySet()){
             if (entry.getValue() >= maxNumberOfDuplications){
-                this.dupsToRemove.add(entry.getKey());
+                removeValue(entry.getKey());
             }
-        }
-        for (T element : dupsToRemove){
-            removeValue(element);
         }
         return this.array;
     }
@@ -42,13 +35,10 @@ public abstract class DuplicateDeleter<T> implements DuplicateDeleterInterface<T
     public T[] removeDuplicatesExactly(int exactNumberOfDuplications){
         setUp();
 
-        for (Map.Entry<T, Integer> entry : thisMap.entrySet()){
-            if (entry.getValue() == exactNumberOfDuplications){
-                this.dupsToRemove.add(entry.getKey());
+        for (Map.Entry<T, Integer> entry : thisMap.entrySet()) {
+            if (entry.getValue() == exactNumberOfDuplications) {
+                removeValue(entry.getKey());
             }
-        }
-        for (T element : dupsToRemove){
-            removeValue(element);
         }
         return this.array;
     }
@@ -67,15 +57,14 @@ public abstract class DuplicateDeleter<T> implements DuplicateDeleterInterface<T
 
     public void setUp(){
         this.array = permArray.clone();
-        dupsToRemove = new ArrayList<>();
         this.thisMap = new HashMap<>();
         Integer count;
-        for (T element : this.thisList){
-            if (thisMap.get(element) == null){
-                thisMap.put(element, 1);
+        for (T t : array) {
+            if (thisMap.get(t) == null) {
+                thisMap.put(t, 1);
             } else {
-                count = thisMap.get(element);
-                thisMap.put(element, count + 1);
+                count = thisMap.get(t);
+                thisMap.put(t, count + 1);
             }
         }
     }
