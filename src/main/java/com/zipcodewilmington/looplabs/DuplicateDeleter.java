@@ -1,9 +1,6 @@
 package com.zipcodewilmington.looplabs;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -12,32 +9,29 @@ import java.util.Map;
 public abstract class DuplicateDeleter<T> implements DuplicateDeleterInterface<T> {
     protected T[] array;
     private T[] permArray;
-    private HashMap<T, Integer> thisMap;
-
 
     public DuplicateDeleter(T[] intArray) {
         this.array = intArray;
-        this.thisMap = new HashMap<>();
         this.permArray = intArray;
     }
 
     public T[] removeDuplicates(int maxNumberOfDuplications){
-        setUp();
+        this.array = permArray.clone();
 
-        for (Map.Entry<T, Integer> entry : thisMap.entrySet()){
-            if (entry.getValue() >= maxNumberOfDuplications){
-                removeValue(entry.getKey());
+        for (T t : permArray){
+            if (countDups(t) >= maxNumberOfDuplications){
+                removeValue(t);
             }
         }
         return this.array;
     }
 
     public T[] removeDuplicatesExactly(int exactNumberOfDuplications){
-        setUp();
+        this.array = permArray.clone();
 
-        for (Map.Entry<T, Integer> entry : thisMap.entrySet()) {
-            if (entry.getValue() == exactNumberOfDuplications) {
-                removeValue(entry.getKey());
+        for (T t : permArray){
+            if (countDups(t) == exactNumberOfDuplications){
+                removeValue(t);
             }
         }
         return this.array;
@@ -54,18 +48,14 @@ public abstract class DuplicateDeleter<T> implements DuplicateDeleterInterface<T
         this.array = Arrays.copyOf(array, index);
     }
 
-
-    public void setUp(){
-        this.array = permArray.clone();
-        this.thisMap = new HashMap<>();
-        Integer count;
-        for (T t : array) {
-            if (thisMap.get(t) == null) {
-                thisMap.put(t, 1);
-            } else {
-                count = thisMap.get(t);
-                thisMap.put(t, count + 1);
+    private Integer countDups(T element){
+        Integer count = 0;
+        for (T t : permArray){
+            if (t.equals(element)){
+                count++;
             }
         }
+        return count;
     }
+
 }
